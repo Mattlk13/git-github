@@ -28,6 +28,11 @@ test.beforeEach(t => {
 		.returnsPromise()
 		.resolves({});
 
+	client.gitdata.deleteReference = sinon
+		.stub(client.gitdata, 'deleteReference')
+		.returnsPromise()
+		.resolves({});
+
 	t.context.client = client;
 });
 
@@ -36,6 +41,7 @@ test.afterEach(t => {
 	t.context.client.repos.getBranches.restore();
 	t.context.client.repos.getShaOfCommitRef.restore();
 	t.context.client.gitdata.createReference.restore();
+	t.context.client.gitdata.deleteReference.restore();
 });
 
 test('calling without parameters', async t => {
@@ -81,4 +87,18 @@ test('calling with one parameter (branch name)', async t => {
 
 		t.is(actual, expected, 'should branch off of HEAD');
 	}
+});
+
+test('calling with two parameters (branch name + "delete")', async t => {
+	const client = t.context.client;
+	const context = {
+		client,
+		state: {owner: 'nerdlabs', repo: 'git-github', HEAD: 'master'}
+	};
+
+	await branch(context, 'my_new_branch', 'delete');
+	const actual = client.gitdata.deleteReference.firstCall.args[0].ref;
+	const expected = 'heads/my_new_branch';
+
+	t.is(actual, expected, 'should delete the specified branch');
 });
