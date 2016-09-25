@@ -29,10 +29,12 @@ export default async function branch(
 		});
 	}
 
-	if (cmd === 'create') {
+	if (cmd === 'create' && typeof name === 'string') {
+		// TODO: use newName as start-point if set (branch, sha, tag)
 		const {sha} = await client.repos.getShaOfCommitRef({
 			user: owner,
 			repo,
+			// TODO: use HEAD
 			ref: default_branch // eslint-disable-line camelcase
 		});
 
