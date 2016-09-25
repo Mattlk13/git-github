@@ -71,7 +71,7 @@ test('calling with one parameter (branch name)', async t => {
 
 	{
 		const actual = client.gitdata.createReference.firstCall.args[0].ref;
-		const expected = 'refs/heads/my_new_branch';
+		const expected = 'heads/my_new_branch';
 
 		t.is(actual, expected, 'should create a new branch with the correct ref');
 	}

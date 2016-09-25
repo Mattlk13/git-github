@@ -14,7 +14,7 @@ import branch from './branch';
 
 import type {
 	GitHubOptions,
-	BranchCommands,
+	BranchCommand,
 	Ref,
 	Path,
 	Branch,
@@ -64,7 +64,7 @@ export default class Git {
 	async branch(
 		name?: string,
 		newName?: string,
-		command?: BranchCommands = 'LIST'
+		command?: BranchCommand = 'list'
 	): Promise<Array<{ name: string, default: boolean }>|void> {
 		return branch(context.get(this), name, newName, command);
 	}

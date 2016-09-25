@@ -15,9 +15,9 @@ export type File = {
 	permissions: string;
 };
 /** all commands that `git.branch` accepts */
-export type BranchCommands = 'LIST'|'CREATE'|'DELETE'|'MOVE';
+export type BranchCommand = 'list'|'create'|'delete'|'move';
 /** all commands that `git.tag` accepts */
-export type TagCommands = 'LIST'|'CREATE'|'DELETE';
+export type TagCommands = 'list'|'create'|'delete';
 
 export type GitHubAuth =
 		{ type: 'basic', username: string, password: string }
