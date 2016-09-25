@@ -4,12 +4,13 @@
   "description": "Git CLI-like semantics on the github API",
   "main": "distribution/index.js",
   "scripts": {
+    "build": "babel source/ --out-dir distribution/",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "prebuild": "npm test",
-    "build": "babel source/ --out-dir distribution/",
+    "prepublish": "npm run build",
     "pretest": "xo source/ && npm run flow",
-    "test": "ava",
-    "prepublish": "npm run build"
+    "start": "npm test -- --watch",
+    "test": "ava"
   },
   "ava": {
     "babel": "inherit",
@@ -80,9 +81,11 @@
     "babel-preset-stage-2": "6.13.0",
     "babel-register": "6.14.0",
     "flow-bin": "0.32.0",
+    "sinon": "1.17.6",
     "xo": "0.16.0"
   },
   "dependencies": {
-    "github": "3.1.1"
+    "github": "3.1.1",
+    "sinon-stub-promise": "3.0.1"
   }
 }
