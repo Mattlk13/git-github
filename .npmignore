@@ -1,0 +1,7 @@
+/source
+/flow-typed
+.editorconfig
+.flowconfig
+.npmignore
+.travis.yml
+wallaby.js
