@@ -3,7 +3,7 @@ import assert from 'assert';
 import GitHub from 'github';
 
 import add from './add';
-// import branch from './branch';
+import branch from './branch';
 // import checkout from './checkout';
 // import commit from './commit';
 // import mv from './mv';
@@ -60,14 +60,14 @@ export default class Git {
 		return add(context.get(this), files);
 	}
 
-	// /** Create, list or delete branches. */
-	// async branch(
-	// 	name?: string,
-	// 	newName?: string,
-	// 	command?: BranchCommands = 'LIST'
-	// ): Promise<Array<{ name: string, default: boolean }>|void> {
-	// 	return branch(context.get(this), name, newName, command);
-	// }
+	/** Create, list or delete branches. */
+	async branch(
+		name?: string,
+		newName?: string,
+		command?: BranchCommands = 'LIST'
+	): Promise<Array<{ name: string, default: boolean }>|void> {
+		return branch(context.get(this), name, newName, command);
+	}
 	//
 	// /** Switch branches or checkout a specific tag or commit. */
 	// async checkout(ref: Ref) {
