@@ -53,4 +53,21 @@ export default async function branch(
 			ref: `heads/${name}`
 		});
 	}
+
+	if(cmd === 'move' && typeof name === 'string' && typeof newName === 'string') {
+		const {object: {sha}} = await client.gitdata.getReference({
+			user: owner,
+			repo,
+			ref: `heads/${name}`
+		});
+
+		await client.gitdata.createReference({
+			user: owner,
+			repo,
+			ref: `heads/${newName}`,
+			sha
+		});
+
+		await branch(context, name, 'delete');
+	}
 }
