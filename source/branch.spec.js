@@ -44,7 +44,7 @@ test.afterEach(t => {
 	t.context.client.gitdata.deleteReference.restore();
 });
 
-test('calling without parameters', async t => {
+test('listing branches', async t => {
 	const context = {
 		client: t.context.client,
 		state: {owner: 'nerdlabs', repo: 'git-github'}
@@ -66,7 +66,7 @@ test('calling without parameters', async t => {
 	}
 });
 
-test('calling with one parameter (branch name)', async t => {
+test('creating a branch', async t => {
 	const client = t.context.client;
 	const context = {
 		client,
@@ -89,7 +89,7 @@ test('calling with one parameter (branch name)', async t => {
 	}
 });
 
-test('calling with two parameters (branch name + "delete")', async t => {
+test('deleting a branch', async t => {
 	const client = t.context.client;
 	const context = {
 		client,
