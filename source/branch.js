@@ -45,4 +45,12 @@ export default async function branch(
 			sha
 		});
 	}
+
+	if (cmd === 'delete' && typeof name === 'string') {
+		await client.gitdata.deleteReference({
+			user: owner,
+			repo,
+			ref: `heads/${name}`
+		});
+	}
 }
