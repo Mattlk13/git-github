@@ -1,14 +1,14 @@
 // @flow
 import type {Context, BranchCommand, BranchDescriptor} from './index';
 
-const commands: Set<BranchCommand> = new Set(['list', 'create', 'delete', 'move']);
+const commands: Set<BranchCommand|string> = new Set(['list', 'create', 'delete', 'move']);
 
 export default async function branch(
 	context: Context,
 	name?: string,
 	newName?: string,
 	command?: BranchCommand = 'list'
-): ?BranchDescriptor {
+): Promise<?Array<BranchDescriptor>> {
 	const {client, state: {owner, repo}} = context;
 	const {default_branch} = await client.repos.get({user: owner, repo}); // eslint-disable-line camelcase
 
@@ -16,7 +16,7 @@ export default async function branch(
 	const defaultCommand = ['list', 'create'][args.length] || command;
 
 	const cmd = [name, newName]
-		.reduce((cmd, arg) => commands.has(arg) ? arg : cmd, defaultCommand);
+		.reduce((cmd, arg) => arg && commands.has(arg) ? arg : cmd, defaultCommand);
 
 	if (cmd === 'list') {
 		const branches = await client.repos.getBranches({user: owner, repo});
