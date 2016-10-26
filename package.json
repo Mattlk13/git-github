@@ -74,18 +74,18 @@
   "homepage": "https://github.com/nerdlabs/git-github#readme",
   "devDependencies": {
     "ava": "0.16.0",
-    "babel-cli": "6.14.0",
+    "babel-cli": "6.16.0",
     "babel-plugin-flow-comments": "6.3.19",
     "babel-plugin-syntax-flow": "6.13.0",
     "babel-preset-es2015-node4": "2.1.0",
-    "babel-preset-stage-2": "6.13.0",
-    "babel-register": "6.14.0",
-    "flow-bin": "0.32.0",
+    "babel-preset-stage-2": "6.17.0",
+    "babel-register": "6.16.3",
+    "flow-bin": "0.33.0",
     "sinon": "1.17.6",
     "sinon-stub-promise": "3.0.1",
-    "xo": "0.16.0"
+    "xo": "0.17.0"
   },
   "dependencies": {
-    "github": "3.1.1"
+    "github": "5.2.2"
   }
 }

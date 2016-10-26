@@ -10,7 +10,7 @@ export default async function branch(
 	command?: BranchCommand = 'list'
 ): Promise<?Array<BranchDescriptor>> {
 	const {client, state: {owner, repo}} = context;
-	const {default_branch} = await client.repos.get({user: owner, repo}); // eslint-disable-line camelcase
+	const {default_branch} = await client.repos.get({owner, repo}); // eslint-disable-line camelcase
 
 	const args = [name, newName].filter(c => c && !commands.has(c));
 	const defaultCommand = ['list', 'create'][args.length] || command;
@@ -19,7 +19,7 @@ export default async function branch(
 		.reduce((cmd, arg) => arg && commands.has(arg) ? arg : cmd, defaultCommand);
 
 	if (cmd === 'list') {
-		const branches = await client.repos.getBranches({user: owner, repo});
+		const branches = await client.repos.getBranches({owner, repo});
 
 		return branches.map(({name}) => {
 			return {
@@ -32,14 +32,14 @@ export default async function branch(
 	if (cmd === 'create' && typeof name === 'string') {
 		// TODO: use newName as start-point if set (branch, sha, tag)
 		const {sha} = await client.repos.getShaOfCommitRef({
-			user: owner,
+			owner,
 			repo,
 			// TODO: use HEAD
 			ref: default_branch // eslint-disable-line camelcase
 		});
 
 		await client.gitdata.createReference({
-			user: owner,
+			owner,
 			repo,
 			ref: `heads/${name}`,
 			sha
@@ -48,7 +48,7 @@ export default async function branch(
 
 	if (cmd === 'delete' && typeof name === 'string') {
 		await client.gitdata.deleteReference({
-			user: owner,
+			owner,
 			repo,
 			ref: `heads/${name}`
 		});
@@ -56,13 +56,13 @@ export default async function branch(
 
 	if(cmd === 'move' && typeof name === 'string' && typeof newName === 'string') {
 		const {object: {sha}} = await client.gitdata.getReference({
-			user: owner,
+			owner,
 			repo,
 			ref: `heads/${name}`
 		});
 
 		await client.gitdata.createReference({
-			user: owner,
+			owner,
 			repo,
 			ref: `heads/${newName}`,
 			sha
