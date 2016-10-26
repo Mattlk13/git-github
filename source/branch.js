@@ -1,5 +1,5 @@
 // @flow
-import type {Context, BranchCommand} from './index';
+import type {Context, BranchCommand, BranchDescriptor} from './index';
 
 const commands: Set<BranchCommand> = new Set(['list', 'create', 'delete', 'move']);
 
@@ -8,7 +8,7 @@ export default async function branch(
 	name?: string,
 	newName?: string,
 	command?: BranchCommand = 'list'
-) {
+): ?BranchDescriptor {
 	const {client, state: {owner, repo}} = context;
 	const {default_branch} = await client.repos.get({user: owner, repo}); // eslint-disable-line camelcase
 
@@ -70,4 +70,6 @@ export default async function branch(
 
 		await branch(context, name, 'delete');
 	}
+
+	return null;
 }

@@ -12,20 +12,76 @@ import branch from './branch';
 // import rm from './rm';
 // import tag from './tag';
 
-import type {
-	GitHubOptions,
-	BranchCommand,
-	Ref,
-	Path,
-	Branch,
-	Commit,
-	Tag,
-	TagCommands
-} from './index';
+/** sha of a commit */
+export type Commit = string;
+/** name of a tag */
+export type Tag = string;
+/** name of a branch */
+export type Branch = string;
+/** anything that can be checked-out (commit, tag, branch, 'HEAD') */
+export type Ref = Commit|Tag|Branch|'HEAD';
+/** path to a file */
+export type Path = string;
+/** an object describing a file */
+export type File = {
+  path: Path;
+  content: Buffer;
+	permissions: string;
+};
+/** all commands that `git.branch` accepts */
+export type BranchCommand = 'list'|'create'|'delete'|'move';
+/** all commands that `git.tag` accepts */
+export type TagCommands = 'list'|'create'|'delete';
 
-function getHead(branches: ?Array<{ name: string, default: boolean }>) {
+export type GitHubAuth =
+		{ type: 'basic', username: string, password: string }
+	| { type: 'oauth', key: string, secret: string }
+	| { type: 'oauth', token: string };
+
+export type GitHubOptions = {
+	owner: string;
+	repo: string;
+	auth?: GitHubAuth;
+	client?: GitHub;
+	debug?: boolean;
+	protocol?: 'https'|'http'|string;
+	host?: string;
+	pathPrefix?: string;
+	headers?: { [key: string]: string };
+	Promise?: typeof Promise;
+	followRedirects?: boolean;
+	timeout?: number;
+};
+
+export type GitIndex = {
+	files: Array<File>;
+};
+
+export type GitHead = {
+	ref?: string;
+	commit?: string;
+};
+
+export type GitState = {
+	owner: string;
+	repo: string;
+	HEAD: ?Promise<GitHead>;
+	index: GitIndex;
+};
+
+export type Context = {
+	client: GitHub;
+	state: GitState;
+};
+
+export type BranchDescriptor = {
+	name: string;
+	default: boolean;
+};
+
+function getHead(branches: ?Array<BranchDescriptor>): ?GitHead {
 	const defaultBranch = branches ? branches.find(b => b.default) : null;
-	return defaultBranch ? defaultBranch.name : 'DETACHED';
+	return defaultBranch ? {ref: `heads/${defaultBranch.name}`} : null;
 }
 
 const context = new WeakMap();
@@ -42,17 +98,18 @@ export default class Git {
 			client.auth(auth);
 		}
 
-		const state = {
+		const state: GitState = {
 			owner: options.owner,
 			repo: options.repo,
-			// HEAD: this.branch().then(getHead).catch(() => 'DETACHED'),
-			HEAD: 'DETACHED',
+			HEAD: null,
 			index: {
 				files: [],
 			},
 		};
 
 		context.set(this, {client, state});
+
+		state.HEAD = this.branch().then(getHead).catch(console.error.bind(console));
 	}
 
 	/** Add file contents to the index. */
@@ -65,7 +122,7 @@ export default class Git {
 		name?: string,
 		newName?: string,
 		command?: BranchCommand = 'list'
-	): Promise<Array<{ name: string, default: boolean }>|void> {
+	): Promise<?Array<BranchDescriptor>> {
 		return branch(context.get(this), name, newName, command);
 	}
 	//
