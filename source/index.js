@@ -9,7 +9,7 @@ import checkout from './checkout';
 // import mv from './mv';
 // import rebase from './rebase';
 // import revert from './revert';
-// import rm from './rm';
+import rm from './rm';
 // import tag from './tag';
 
 /** sha of a commit */
@@ -119,7 +119,7 @@ export default class Git {
 	}
 
 	/** Add file contents to the index. */
-	async add(files: Array<File>) {
+	async add(files: Array<File>): Promise<void> {
 		return add(context.get(this), files);
 	}
 
@@ -157,11 +157,11 @@ export default class Git {
 	// 	return revert(context.get(this), commits);
 	// }
 	//
-	// /** Remove files from the index */
-	// async rm(files: Array<Path>) {
-	// 	return rm(context.get(this), files);
-	// }
-	//
+	/** Remove files from the index */
+	async rm(files: Array<Path>): Promise<void> {
+		return rm(context.get(this), files);
+	}
+
 	// /** Create, list or delete tags. */
 	// async tag(name?: Tag, command: TagCommands = 'LIST') {
 	// 	return tag(context.get(this), name, command);
