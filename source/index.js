@@ -4,7 +4,7 @@ import GitHub from 'github';
 
 import add from './add';
 import branch from './branch';
-// import checkout from './checkout';
+import checkout from './checkout';
 // import commit from './commit';
 // import mv from './mv';
 // import rebase from './rebase';
@@ -18,8 +18,8 @@ export type Commit = string;
 export type Tag = string;
 /** name of a branch */
 export type Branch = string;
-/** anything that can be checked-out (commit, tag, branch, 'HEAD') */
-export type Ref = Commit|Tag|Branch|'HEAD';
+/** anything that can be checked-out (commit, tag, branch) */
+export type Ref = Commit|Tag|Branch;
 /** path to a file */
 export type Path = string;
 /** an object describing a file */
@@ -79,11 +79,6 @@ export type BranchDescriptor = {
 	default: boolean;
 };
 
-function getHead(branches: ?Array<BranchDescriptor>): ?GitHead {
-	const defaultBranch = branches ? branches.find(b => b.default) : null;
-	return defaultBranch ? {ref: `heads/${defaultBranch.name}`} : null;
-}
-
 const context = new WeakMap();
 
 export default class Git {
@@ -109,7 +104,18 @@ export default class Git {
 
 		context.set(this, {client, state});
 
-		state.HEAD = this.branch().then(getHead).catch(console.error.bind(console));
+		this.branch().then(branches => {
+      if (branches) {
+        const branch = branches.find(branch => branch.default);
+        if (branch) {
+          this.checkout(branch.name);
+        }
+      }
+    });
+	}
+
+	getContext() {
+		return context.get(this);
 	}
 
 	/** Add file contents to the index. */
@@ -125,12 +131,12 @@ export default class Git {
 	): Promise<?Array<BranchDescriptor>> {
 		return branch(context.get(this), name, newName, command);
 	}
-	//
-	// /** Switch branches or checkout a specific tag or commit. */
-	// async checkout(ref: Ref) {
-	// 	return checkout(context.get(this), ref);
-	// }
-	//
+
+	/** Switch branches or checkout a specific tag or commit. */
+	async checkout(ref: Ref): Promise<void> {
+		return checkout(context.get(this), ref);
+	}
+
 	// /** Record changes to the repository. */
 	// async commit(message: string) {
 	// 	return commit(context.get(this), message);
