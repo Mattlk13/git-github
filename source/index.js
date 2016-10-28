@@ -10,7 +10,7 @@ import checkout from './checkout';
 // import rebase from './rebase';
 // import revert from './revert';
 import rm from './rm';
-// import tag from './tag';
+import tag from './tag';
 
 /** sha of a commit */
 export type Commit = string;
@@ -31,7 +31,7 @@ export type File = {
 /** all commands that `git.branch` accepts */
 export type BranchCommand = 'list'|'create'|'delete'|'move';
 /** all commands that `git.tag` accepts */
-export type TagCommands = 'list'|'create'|'delete';
+export type TagCommand = 'list'|'create'|'delete';
 
 export type GitHubAuth =
 		{ type: 'basic', username: string, password: string }
@@ -77,6 +77,10 @@ export type Context = {
 export type BranchDescriptor = {
 	name: string;
 	default: boolean;
+};
+
+export type TagDescriptor = {
+  name: string;
 };
 
 const context = new WeakMap();
@@ -162,8 +166,11 @@ export default class Git {
 		return rm(context.get(this), files);
 	}
 
-	// /** Create, list or delete tags. */
-	// async tag(name?: Tag, command: TagCommands = 'LIST') {
-	// 	return tag(context.get(this), name, command);
-	// }
+	/** Create, list or delete tags. */
+  async tag(
+    name?: Tag,
+    command: TagCommand = 'list'
+  ): Promise<?Array<TagDescriptor>> {
+		return tag(context.get(this), name, command);
+	}
 }
